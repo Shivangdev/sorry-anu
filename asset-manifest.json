@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/sorry-anu/static/css/main.dd22a106.css",
+    "main.js": "/sorry-anu/static/js/main.37494161.js",
+    "static/js/453.d9121e48.chunk.js": "/sorry-anu/static/js/453.d9121e48.chunk.js",
+    "index.html": "/sorry-anu/index.html",
+    "main.dd22a106.css.map": "/sorry-anu/static/css/main.dd22a106.css.map",
+    "main.37494161.js.map": "/sorry-anu/static/js/main.37494161.js.map",
+    "453.d9121e48.chunk.js.map": "/sorry-anu/static/js/453.d9121e48.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dd22a106.css",
+    "static/js/main.37494161.js"
+  ]
+}
