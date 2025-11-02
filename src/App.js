@@ -26,7 +26,8 @@ function App() {
     <div className="app-wrapper">
       {/* 🎵 Background Music */}
       <audio ref={audioRef} autoPlay loop muted>
-        <source src="/images/Iraaday.mp3" type="audio/mpeg" />
+        <source src={process.env.PUBLIC_URL + "/images/Iraaday.mp3"} type="audio/mpeg" />
+
       </audio>
 
       {/* 🎉 Confetti */}

@@ -110,3 +110,14 @@
   border-radius: 12px;
   overflow: hidden;
 }
+
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.puzzle-section, .puzzle-section * {
+  touch-action: none;
+}

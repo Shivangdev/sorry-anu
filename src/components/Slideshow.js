@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const images = [
-  "/images/image.png",
-  "/images/IMG-20241229-WA0000.jpg",
-  "/images/tumblr_inline_odfzffYft11sn8dvy_1280.png"
+ process.env.PUBLIC_URL + "/images/image.png",
+  process.env.PUBLIC_URL + "/images/1CAFF894-5803-4847-A968-DF92E0172395.jpg",
+  process.env.PUBLIC_URL + "/images/tumblr_inline_odfzffYft11sn8dvy_1280.png",
 ];
 
 export default function Slideshow() {

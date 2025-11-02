@@ -4,7 +4,8 @@ import "./styles.css";
 
 const Puzzle = () => {
   const [pieces, setPieces] = useState([]);
-  const [draggedPiece, setDraggedPiece] = useState(null);
+  const [draggedPiece, setDraggedPiece] = useState(null); // used for desktop dragging
+  const [selectedPiece, setSelectedPiece] = useState(null); // used for tap-to-select on mobile
   const [solved, setSolved] = useState(false);
 
   useEffect(() => {
@@ -13,23 +14,54 @@ const Puzzle = () => {
     setPieces(shuffled);
   }, []);
 
+  // Desktop drag start
   const handleDragStart = (index) => {
     setDraggedPiece(index);
   };
 
+  // Desktop drop (swap)
   const handleDrop = (index) => {
+    if (draggedPiece === null) return;
+    swapPieces(draggedPiece, index);
+    setDraggedPiece(null);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  // Mobile: tap to select, then tap target to swap
+  const handleTap = (index) => {
+    // if nothing selected -> select this
+    if (selectedPiece === null) {
+      setSelectedPiece(index);
+      return;
+    }
+    // if tapped the same piece -> deselect
+    if (selectedPiece === index) {
+      setSelectedPiece(null);
+      return;
+    }
+    // else swap selectedPiece with tapped index
+    swapPieces(selectedPiece, index);
+    setSelectedPiece(null);
+  };
+
+  // Common swap logic and solved check
+  const swapPieces = (i, j) => {
     const newPieces = [...pieces];
-    const temp = newPieces[index];
-    newPieces[index] = newPieces[draggedPiece];
-    newPieces[draggedPiece] = temp;
+    [newPieces[i], newPieces[j]] = [newPieces[j], newPieces[i]];
     setPieces(newPieces);
 
-    if (newPieces.every((val, i) => val === i)) {
+    if (newPieces.every((val, idx) => val === idx)) {
       setSolved(true);
     }
   };
 
-  const handleDragOver = (e) => e.preventDefault();
+  // Prevent touchmove from scrolling while dragging (only while touching puzzle)
+  const preventTouchMove = (e) => {
+    e.preventDefault();
+  };
 
   return (
     <div className="puzzle-section" style={{ textAlign: "center", marginTop: "50px" }}>
@@ -42,29 +74,49 @@ const Puzzle = () => {
           gridTemplateRows: "repeat(3, 100px)",
           gap: "2px",
           justifyContent: "center",
+          touchAction: "none", // important for mobile
         }}
+        // prevent scrolling while interacting on mobile
+        onTouchMove={preventTouchMove}
       >
-        {pieces.map((piece, index) => (
-          <div
-            key={index}
-            draggable
-            onDragStart={() => handleDragStart(index)}
-            onDragOver={handleDragOver}
-            onDrop={() => handleDrop(index)}
-            style={{
-              width: "100px",
-              height: "100px",
-              backgroundImage: "url('/images/puzzle.jpg')", // make sure puzzle.jpg exists in public/images
-              backgroundSize: "300px 300px",
-              backgroundPosition: `${-(piece % 3) * 100}px ${-Math.floor(piece / 3) * 100}px`,
-              border: "1px solid #fff",
-              borderRadius: "6px",
-              cursor: "grab",
-              transition: "transform 0.2s ease",
-              userSelect: "none",
-            }}
-          />
-        ))}
+        {pieces.map((piece, index) => {
+          const isSelected = selectedPiece === index;
+          return (
+            <div
+              key={index}
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragOver={handleDragOver}
+              onDrop={() => handleDrop(index)}
+              // touch handlers: tap to select
+              onTouchStart={(e) => {
+                // small delay to allow native behavior if needed; we simply map to tap
+                e.stopPropagation();
+                handleTap(index);
+              }}
+              onClick={() => {
+                // fallback for non-touch devices: allow click to select/swap too
+                handleTap(index);
+              }}
+              style={{
+                width: "100px",
+                height: "100px",
+                backgroundImage: `url(${process.env.PUBLIC_URL}/images/puzzle.jpg)`,
+                backgroundSize: "300px 300px",
+                backgroundPosition: `${-(piece % 3) * 100}px ${-Math.floor(piece / 3) * 100}px`,
+                border: isSelected ? "3px solid #ffd6e0" : "1px solid #fff",
+                borderRadius: "6px",
+                cursor: "grab",
+                transition: "transform 0.14s ease, border 0.12s ease, box-shadow 0.12s ease",
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                MozUserSelect: "none",
+                WebkitTouchCallout: "none",
+                boxShadow: isSelected ? "0 6px 18px rgba(255,75,145,0.15)" : "none",
+              }}
+            />
+          );
+        })}
       </div>
 
       {solved && (
